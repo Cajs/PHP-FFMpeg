@@ -713,6 +713,43 @@ class VideoTest extends AbstractStreamableTestCase
         $video->save($format, $outputPathfile);
     }
 
+    public function testEnableVbrEncodingInVideoFormat()
+    {
+        $driver = $this->getFFMpegDriverMock();
+        $ffprobe = $this->getFFProbeMock();
+
+        $video = new Video(__FILE__, $driver, $ffprobe);
+
+        $this->assertFalse($video->getFormat()->getEnableVbrEncoding());
+
+        $video->getFormat()->setEnableVbrEncoding(true);
+        $this->assertTrue($video->getFormat()->getEnableVbrEncoding());
+    }
+
+    public function testEnableVbrEncodingInVideoFormat()
+    {
+        $driver = $this->getFFMpegDriverMock();
+        $ffprobe = $this->getFFProbeMock();
+
+        $video = new Video(__FILE__, $driver, $ffprobe);
+
+        $this->assertFalse($video->getFormat()->getEnableVbrEncoding());
+
+        $video->getFormat()->setEnableVbrEncoding(true);
+        $this->assertTrue($video->getFormat()->getEnableVbrEncoding());
+    }
+
+    public function testInvalidVbrEncodingQualityInVideoFormat()
+    {
+        $this->expectException('\InvalidArgumentException');
+
+        $driver = $this->getFFMpegDriverMock();
+        $ffprobe = $this->getFFProbeMock();
+
+        $video = new Video(__FILE__, $driver, $ffprobe);
+        $video->getFormat()->setVbrEncodingQuality(10);
+    }
+
     public function getClassName()
     {
         return 'FFMpeg\Media\Video';

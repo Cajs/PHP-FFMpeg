@@ -334,6 +334,43 @@ class AudioTest extends AbstractStreamableTestCase
         }
     }
 
+    public function testEnableVbrEncoding()
+    {
+        $driver = $this->getFFMpegDriverMock();
+        $ffprobe = $this->getFFProbeMock();
+
+        $audio = new Audio(__FILE__, $driver, $ffprobe);
+
+        $this->assertFalse($audio->getFormat()->getEnableVbrEncoding());
+
+        $audio->getFormat()->setEnableVbrEncoding(true);
+        $this->assertTrue($audio->getFormat()->getEnableVbrEncoding());
+    }
+
+    public function testSetVbrEncodingQuality()
+    {
+        $driver = $this->getFFMpegDriverMock();
+        $ffprobe = $this->getFFProbeMock();
+    
+        $audio = new Audio(__FILE__, $driver, $ffprobe);
+    
+        $this->assertEquals(3, $audio->getFormat()->getVbrEncodingQuality());
+    
+        $audio->getFormat()->setVbrEncodingQuality(5);
+        $this->assertEquals(5, $audio->getFormat()->getVbrEncodingQuality());
+    }
+
+    public function testInvalidVbrEncodingQuality()
+    {
+        $this->expectException('\InvalidArgumentException');
+
+        $driver = $this->getFFMpegDriverMock();
+        $ffprobe = $this->getFFProbeMock();
+
+        $audio = new Audio(__FILE__, $driver, $ffprobe);
+        $audio->getFormat()->setVbrEncodingQuality(10);
+    }
+
     public function getClassName()
     {
         return 'FFMpeg\Media\Audio';
