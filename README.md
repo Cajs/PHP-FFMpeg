@@ -231,6 +231,19 @@ $waveform = $audio->waveform();
 $waveform->save( 'waveform.png' );
 ```
 
+###### VBR Encoding
+
+You can also enable VBR encoding, using `setEnableVbrEncoding()` and `setVbrEncodingQuality()` function to class 
+that implements `FFMpeg\Format\FormatInterface`.
+
+
+```php
+$format
+    ->setEnableVbrEncoding(true)
+    ->setVbrEncodingQuality(5);
+```
+NOTE: as default settings VBR encoding disables and VBR quality equals 3
+
 ##### Filters
 
 You can apply filters on `FFMpeg\Media\Video` with the `FFMpeg\Media\Video::addFilter`
@@ -450,6 +463,14 @@ $audio->filters()->resample($rate);
 The resample filter takes two parameters :
 
 - `$rate`, a valid audio sample rate value (integer)
+
+###### Custom
+
+Custom filter for audio file. For example to resize album image url.
+
+```php
+$audio->filters()->simple(['-s', '500x500']);
+```
 
 #### Frame
 
