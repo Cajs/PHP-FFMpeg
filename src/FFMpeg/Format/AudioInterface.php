@@ -42,16 +42,32 @@ interface AudioInterface extends FormatInterface
     public function getAvailableAudioCodecs();
 
     /**
-     * Get enable vbr encoding parametr
+     * Get enable vbr encoding parameter
      *
      * @return bool
      */
-    public function getEnableVbrEncoding();
+    public function getEnableVbrEncoding(): bool;
 
     /**
-     * Set vbr encoding quality
+     * Get the VBR encoding quality.
      *
-     * @return integer
+     * @return int
      */
-    public function getVbrEncodingQuality();
+    public function getVbrEncodingQuality(): int;
+
+    /**
+     * Enable or disable VBR (Variable Bit Rate) encoding.
+     *
+     * @param bool $enabled True to enable VBR, false to disable.
+     * @return $this For method chaining.
+     */
+    public function setEnableVbrEncoding(bool $enabled): static;
+
+    /**
+     * Set VBR encoding quality.
+     *
+     * @param integer $value The VBR quality value.
+     * @return $this
+     */
+    public function setVbrEncodingQuality(int $value): static;
 }

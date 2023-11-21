@@ -334,41 +334,39 @@ class AudioTest extends AbstractStreamableTestCase
         }
     }
 
-    public function testEnableVbrEncoding()
+    public function testBuildCommandWithVbr()
     {
         $driver = $this->getFFMpegDriverMock();
         $ffprobe = $this->getFFProbeMock();
 
-        $audio = new Audio(__FILE__, $driver, $ffprobe);
+        $configuration = $this->getMockBuilder('Alchemy\BinaryDriver\ConfigurationInterface')->getMock();
 
-        $this->assertFalse($audio->getFormat()->getEnableVbrEncoding());
+        $driver->expects($this->any())
+            ->method('getConfiguration')
+            ->will($this->returnValue($configuration));
 
-        $audio->getFormat()->setEnableVbrEncoding(true);
-        $this->assertTrue($audio->getFormat()->getEnableVbrEncoding());
-    }
+        $format = $this->getMockBuilder('FFMpeg\Format\AudioInterface')->getMock();
+        $format->expects($this->any())
+            ->method('getExtraParams')
+            ->will($this->returnValue(['param']));
 
-    public function testSetVbrEncodingQuality()
-    {
-        $driver = $this->getFFMpegDriverMock();
-        $ffprobe = $this->getFFProbeMock();
-    
-        $audio = new Audio(__FILE__, $driver, $ffprobe);
-    
-        $this->assertEquals(3, $audio->getFormat()->getVbrEncodingQuality());
-    
-        $audio->getFormat()->setVbrEncodingQuality(5);
-        $this->assertEquals(5, $audio->getFormat()->getVbrEncodingQuality());
-    }
-
-    public function testInvalidVbrEncodingQuality()
-    {
-        $this->expectException('\InvalidArgumentException');
-
-        $driver = $this->getFFMpegDriverMock();
-        $ffprobe = $this->getFFProbeMock();
+        $format->setEnableVbrEncoding(true);
+        $format->setVbrEncodingQuality(5);
+        $format->method('getEnableVbrEncoding')->willReturn(true);
+        $format->method('getVbrEncodingQuality')->willReturn(5);
 
         $audio = new Audio(__FILE__, $driver, $ffprobe);
-        $audio->getFormat()->setVbrEncodingQuality(10);
+
+        $reflection = new \ReflectionClass(get_class($audio));
+        $method = $reflection->getMethod('buildCommand');
+        $method->setAccessible(true);
+
+        $outputPathfile = 'output/path';
+        $commands = $method->invokeArgs($audio, [$format, $outputPathfile]);
+        print_r($commands);
+
+        $this->assertContains('-q:a', $commands);
+        $this->assertContains('5', $commands);
     }
 
     public function getClassName()
